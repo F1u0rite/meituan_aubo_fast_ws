@@ -1,0 +1,41 @@
+[0.011s] Invoking command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/aaet/meituan_aubo_fast_ws/build/mtc_control -- -j22 -l22
+[0.058s] [ 11%] Built target tool_frames_node
+[0.058s] [ 22%] Built target robot_state_node
+[0.060s] [ 27%] [32mBuilding CXX object CMakeFiles/tcp_cartesian_executor.dir/src/tcp_cartesian_executor.cpp.o[0m
+[0.061s] [ 38%] Built target tcp_cartesian_monitor
+[0.061s] [ 50%] Built target cartesian_monitor
+[0.061s] [ 61%] Built target cartesian_trajectory
+[0.062s] [ 72%] Built target cartesian_executor
+[0.063s] [ 83%] Built target trajectory_client
+[0.067s] [ 94%] Built target kinematics_node
+[9.162s] [100%] [32m[1mLinking CXX executable tcp_cartesian_executor[0m
+[9.532s] [100%] Built target tcp_cartesian_executor
+[9.542s] Invoked command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/aaet/meituan_aubo_fast_ws/build/mtc_control -- -j22 -l22
+[9.551s] Invoking command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/aaet/meituan_aubo_fast_ws/build/mtc_control
+[9.558s] -- Install configuration: ""
+[9.558s] -- Execute custom install script
+[9.558s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/robot_state_node
+[9.558s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/trajectory_client
+[9.559s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/kinematics_node
+[9.559s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_trajectory
+[9.559s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_executor
+[9.559s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_monitor
+[9.559s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tool_frames_node
+[9.559s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_cartesian_monitor
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_cartesian_executor
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/package_run_dependencies/mtc_control
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/parent_prefix_path/mtc_control
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/ament_prefix_path.sh
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/ament_prefix_path.dsv
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/path.sh
+[9.560s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/path.dsv
+[9.561s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.bash
+[9.561s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.sh
+[9.561s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.zsh
+[9.561s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.dsv
+[9.561s] -- Symlinking: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/package.dsv
+[9.569s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/packages/mtc_control
+[9.570s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/cmake/mtc_controlConfig.cmake
+[9.570s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/cmake/mtc_controlConfig-version.cmake
+[9.570s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/package.xml
+[9.571s] Invoked command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/aaet/meituan_aubo_fast_ws/build/mtc_control

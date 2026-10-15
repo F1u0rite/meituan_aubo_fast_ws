@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<package format="3">
+
+  <name>mtc_control</name>
+
+  <version>0.0.1</version>
+
+  <description>
+    Meituan AUBO S3 ROS 2 control package.
+    Robot state monitoring, joint trajectory execution,
+    KDL forward/inverse kinematics,
+    and Cartesian trajectory planning.
+  </description>
+
+  <maintainer email="aaet@example.com">aaet</maintainer>
+
+  <license>Apache-2.0</license>
+
+
+  <!-- Build System -->
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+
+  <!-- ROS 2 Core -->
+
+  <depend>rclcpp</depend>
+
+  <depend>rclcpp_action</depend>
+
+
+  <!-- ROS Messages -->
+
+  <depend>sensor_msgs</depend>
+
+  <depend>std_msgs</depend>
+
+  <depend>trajectory_msgs</depend>
+
+  <depend>control_msgs</depend>
+
+
+  <!-- ros2_control -->
+
+  <depend>controller_manager_msgs</depend>
+
+
+  <!-- TF2 -->
+
+  <depend>tf2</depend>
+
+  <depend>tf2_ros</depend>
+
+
+  <!-- Robot Kinematics -->
+
+  <depend>kdl_parser</depend>
+
+  <depend>urdf</depend>
+
+  <depend>orocos_kdl_vendor</depend>
+
+
+  <!-- Testing -->
+
+  <test_depend>ament_lint_auto</test_depend>
+
+  <test_depend>ament_lint_common</test_depend>
+
+
+  <export>
+
+    <build_type>ament_cmake</build_type>
+
+  </export>
+
+</package>

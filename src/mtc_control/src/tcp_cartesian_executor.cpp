@@ -1,0 +1,404 @@
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <std_msgs/msg/header.hpp>
+#include <trajectory_msgs/msg/joint_trajectory.hpp>
+#include <control_msgs/action/follow_joint_trajectory.hpp>
+#include <controller_manager_msgs/srv/list_hardware_components.hpp>
+#include <controller_manager_msgs/srv/list_controllers.hpp>
+
+#include <algorithm>
+#include <array>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <thread>
+
+using namespace std::chrono_literals;
+using FollowJT = control_msgs::action::FollowJointTrajectory;
+using ListHW = controller_manager_msgs::srv::ListHardwareComponents;
+using ListControllers = controller_manager_msgs::srv::ListControllers;
+using Trajectory = trajectory_msgs::msg::JointTrajectory;
+using JointState = sensor_msgs::msg::JointState;
+
+// MTC 5C: TCP-preview-only executor, *exclusively* for GenericSystem.
+// This is not a physical robot executor. Explicit opt-in + two independent
+// runtime hardware checks + monitor/preview stamp handshake are required.
+namespace {
+const std::array<std::string, 6> kJoints = {
+  "shoulder_joint", "upperArm_joint", "foreArm_joint",
+  "wrist1_joint", "wrist2_joint", "wrist3_joint"
+};
+const std::array<double, 6> kLower = {
+  -6.283185307179586, -3.141592653589793, -2.87979326579064,
+  -6.283185307179586, -6.283185307179586, -6.283185307179586
+};
+const std::array<double, 6> kUpper = {
+  6.283185307179586, 3.141592653589793, 2.87979326579064,
+  6.283185307179586, 6.283185307179586, 6.283185307179586
+};
+
+double point_seconds(const trajectory_msgs::msg::JointTrajectoryPoint &p)
+{
+  return static_cast<double>(p.time_from_start.sec) +
+         static_cast<double>(p.time_from_start.nanosec) * 1e-9;
+}
+
+bool same_header(const std_msgs::msg::Header &a,
+                 const std_msgs::msg::Header &b)
+{
+  return a.stamp.sec == b.stamp.sec &&
+         a.stamp.nanosec == b.stamp.nanosec &&
+         a.frame_id == b.frame_id;
+}
+
+bool validate(const Trajectory &t, const std::array<double, 6> &current,
+              const rclcpp::Logger &log)
+{
+  if (t.header.frame_id != "base_link" ||
+      t.joint_names.size() != 6 ||
+      !std::equal(kJoints.begin(), kJoints.end(), t.joint_names.begin()) ||
+      t.points.size() < 6 || t.points.size() > 201) {
+    RCLCPP_ERROR(log, "Invalid TCP preview frame/joints/point count");
+    return false;
+  }
+  if (std::abs(point_seconds(t.points.front())) > 1e-9) {
+    RCLCPP_ERROR(log, "Preview must begin at t=0");
+    return false;
+  }
+  const double total = point_seconds(t.points.back());
+  if (!std::isfinite(total) || total < 2.0 || total > 10.0) {
+    RCLCPP_ERROR(log, "Preview duration outside mock-only window [2,10] s");
+    return false;
+  }
+  for (size_t i = 0; i < t.points.size(); ++i) {
+    const auto &p = t.points[i];
+    if (p.positions.size() != 6 || !p.velocities.empty() ||
+        !p.accelerations.empty() || !p.effort.empty()) {
+      RCLCPP_ERROR(log, "Unsupported trajectory point format at %zu", i);
+      return false;
+    }
+    const double dt = i ? point_seconds(p) - point_seconds(t.points[i - 1]) : 0.0;
+    if (i && (!std::isfinite(dt) || dt <= 0.0)) {
+      RCLCPP_ERROR(log, "Nonmonotonic trajectory timestamp");
+      return false;
+    }
+    for (size_t j = 0; j < 6; ++j) {
+      const double q = p.positions[j];
+      if (!std::isfinite(q) || q < kLower[j] + 0.01 ||
+          q > kUpper[j] - 0.01 ||
+          std::abs(q - t.points.front().positions[j]) > 0.15) {
+        RCLCPP_ERROR(log, "Mock joint range violation at %zu/%zu", i, j);
+        return false;
+      }
+      if (i == 0 && std::abs(q - current[j]) > 0.005) {
+        RCLCPP_ERROR(log, "Stale start joint %s", kJoints[j].c_str());
+        return false;
+      }
+      if (i) {
+        const double dq = std::abs(q - t.points[i - 1].positions[j]);
+        if (dq > 0.03 || dq / dt > 0.10) {
+          RCLCPP_ERROR(log, "Mock joint step/speed violation at %zu/%zu", i, j);
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+// spin_until_future_complete() is used while no executor is already spinning
+// this node; all subscriptions below remain serviced by explicit spin_some().
+bool check_mock(const rclcpp::Node::SharedPtr &node)
+{
+  auto h = node->create_client<ListHW>(
+    "/controller_manager/list_hardware_components");
+  if (!h->wait_for_service(5s)) {
+    RCLCPP_ERROR(node->get_logger(), "No controller_manager hardware service");
+    return false;
+  }
+  auto future = h->async_send_request(std::make_shared<ListHW::Request>());
+  if (rclcpp::spin_until_future_complete(node, future, 5s) !=
+      rclcpp::FutureReturnCode::SUCCESS) {
+    RCLCPP_ERROR(node->get_logger(), "Hardware query timeout");
+    return false;
+  }
+  // Keep the service response shared_ptr alive for the whole inspection.
+  // FutureAndRequestId::get() returns the shared_ptr by value in Jazzy;
+  // taking a reference directly to get()->component would dangle.
+  const auto hw_response = future.get();
+  if (!hw_response) {
+    RCLCPP_ERROR(node->get_logger(),
+      "Null hardware service response: REFUSED (NO GOAL SENT)");
+    return false;
+  }
+  const auto &parts = hw_response->component;
+
+  // Diagnostic revision: show the *actual response observed by this process*.
+  // Never infer Mock safety from a previous shell command: each check must
+  // independently validate the live controller_manager service response.
+  RCLCPP_INFO(node->get_logger(),
+    "5C HW CHECK: received %zu component(s); require exactly 1",
+    parts.size());
+
+  for (size_t i = 0; i < parts.size(); ++i) {
+    const auto &p = parts[i];
+    const bool name_ok = (p.name == "auboHardwareInterface");
+    const bool plugin_ok = (p.plugin_name == "mock_components/GenericSystem");
+    const bool state_ok = (p.state.label == "active");
+
+    RCLCPP_INFO(node->get_logger(),
+      "5C HW[%zu]: name='%s' (length=%zu, match=%s); "
+      "plugin='%s' (length=%zu, match=%s); "
+      "state={id=%u, label='%s'} (label_match=%s)",
+      i,
+      p.name.c_str(), p.name.size(), name_ok ? "YES" : "NO",
+      p.plugin_name.c_str(), p.plugin_name.size(),
+      plugin_ok ? "YES" : "NO",
+      static_cast<unsigned int>(p.state.id),
+      p.state.label.c_str(), state_ok ? "YES" : "NO");
+  }
+
+  if (parts.size() != 1 || parts[0].name != "auboHardwareInterface" ||
+      parts[0].plugin_name != "mock_components/GenericSystem" ||
+      parts[0].state.label != "active") {
+    RCLCPP_ERROR(node->get_logger(),
+      "REAL/UNKNOWN HARDWARE: REFUSED (inspect HW CHECK above; "
+      "NO GOAL SENT)");
+    return false;
+  }
+  auto c = node->create_client<ListControllers>(
+    "/controller_manager/list_controllers");
+  if (!c->wait_for_service(5s)) {
+    RCLCPP_ERROR(node->get_logger(), "No controller list service");
+    return false;
+  }
+  auto cf = c->async_send_request(std::make_shared<ListControllers::Request>());
+  if (rclcpp::spin_until_future_complete(node, cf, 5s) !=
+      rclcpp::FutureReturnCode::SUCCESS) {
+    RCLCPP_ERROR(node->get_logger(), "Controller query timeout");
+    return false;
+  }
+  // Same lifetime rule for the controller service response.
+  const auto ctrl_response = cf.get();
+  if (!ctrl_response) {
+    RCLCPP_ERROR(node->get_logger(),
+      "Null controller service response: REFUSED (NO GOAL SENT)");
+    return false;
+  }
+  bool jt = false, js = false;
+  for (const auto &item : ctrl_response->controller) {
+    if (item.name == "joint_trajectory_controller" && item.state == "active" &&
+        item.type == "joint_trajectory_controller/JointTrajectoryController") {
+      jt = true;
+    }
+    if (item.name == "joint_state_broadcaster" && item.state == "active") {
+      js = true;
+    }
+  }
+  if (!jt || !js) {
+    RCLCPP_ERROR(node->get_logger(), "Required controllers not active");
+    return false;
+  }
+  RCLCPP_INFO(node->get_logger(), "Verified GenericSystem and active controllers");
+  return true;
+}
+
+int run(const rclcpp::Node::SharedPtr &node)
+{
+  // Diagnostic-only mode is strictly read-only. It queries hardware and
+  // controller services, then exits BEFORE creating action clients or
+  // accepting any trajectory preview. No motion opt-in is needed for this.
+  const bool diagnostic_only =
+    node->declare_parameter<bool>("diagnostic_only", false);
+  if (diagnostic_only) {
+    RCLCPP_WARN(node->get_logger(),
+      "5C DIAG V3: READ-ONLY hardware/controller inspection; "
+      "NO ACTION CLIENT, NO ROBOT MOTION");
+    const bool verified = check_mock(node);
+    RCLCPP_INFO(node->get_logger(),
+      "5C DIAG V3 completed: %s (NO GOAL SENT)",
+      verified ? "GENERIC SYSTEM VERIFIED" : "VERIFICATION REFUSED");
+    return verified ? 0 : 1;
+  }
+
+  const bool enabled = node->declare_parameter<bool>("enable_mock_motion", false);
+  const bool acknowledged = node->declare_parameter<bool>(
+    "acknowledge_nominal_tcp", false);
+  if (!enabled || !acknowledged) {
+    RCLCPP_ERROR(node->get_logger(),
+      "Motion LOCKED. Require BOTH enable_mock_motion:=true and "
+      "acknowledge_nominal_tcp:=true (GenericSystem ONLY)");
+    return 1;
+  }
+  RCLCPP_WARN(node->get_logger(),
+    "5C DIAG V3: MOCK ONLY; nominal TCP; no collision/dynamic safety check");
+  const rclcpp::Time started = node->now();
+  if (!check_mock(node)) return 1;
+
+  std::array<double, 6> current{};
+  bool state_valid = false;
+  std::chrono::steady_clock::time_point last_state{};
+  Trajectory::SharedPtr preview;
+  std_msgs::msg::Header monitor_armed;
+  bool armed_received = false;
+
+  auto joints = node->create_subscription<JointState>(
+    "/joint_states", rclcpp::SensorDataQoS(),
+    [&](JointState::SharedPtr msg) {
+      std::array<double, 6> q{};
+      for (size_t j = 0; j < 6; ++j) {
+        const auto it = std::find(msg->name.begin(), msg->name.end(), kJoints[j]);
+        if (it == msg->name.end()) return;
+        const size_t idx = static_cast<size_t>(
+          std::distance(msg->name.begin(), it));
+        if (idx >= msg->position.size() || !std::isfinite(msg->position[idx]))
+          return;
+        q[j] = msg->position[idx];
+      }
+      current = q;
+      last_state = std::chrono::steady_clock::now();
+      state_valid = true;
+    });
+
+  auto previews = node->create_subscription<Trajectory>(
+    "/mtc/tcp_cartesian_preview", rclcpp::QoS(1).reliable().transient_local(),
+    [&](Trajectory::SharedPtr msg) {
+      const auto stamp = rclcpp::Time(msg->header.stamp);
+      const double age = (node->now() - stamp).seconds();
+      const double since_start = (stamp - started).seconds();
+      if (msg->header.stamp.sec <= 0 || since_start < -0.10 ||
+          age < -1.0 || age > 15.0) {
+        RCLCPP_WARN(node->get_logger(),
+          "Ignoring old/future preview (age %.1fs, relative start %.1fs)",
+          age, since_start);
+        return;
+      }
+      if (preview) return;
+      preview = msg;
+      RCLCPP_INFO(node->get_logger(),
+        "Received NEW TCP preview. Waiting for matching monitor arm...");
+    });
+
+  auto arm = node->create_subscription<std_msgs::msg::Header>(
+    "/mtc/tcp_monitor_armed", rclcpp::QoS(1).reliable().transient_local(),
+    [&](std_msgs::msg::Header::SharedPtr msg) {
+      monitor_armed = *msg;
+      armed_received = true;
+    });
+
+  RCLCPP_INFO(node->get_logger(),
+    "Executor ARMED TO WAIT. Start 5B planner only after 5C monitor and "
+    "executor are running. Waiting up to 60 s.");
+  const auto deadline = std::chrono::steady_clock::now() + 60s;
+  while (rclcpp::ok() && std::chrono::steady_clock::now() < deadline) {
+    rclcpp::spin_some(node);
+    const bool fresh = state_valid &&
+      std::chrono::steady_clock::now() - last_state < 500ms;
+    if (preview && fresh && armed_received &&
+        same_header(preview->header, monitor_armed)) break;
+    std::this_thread::sleep_for(20ms);
+  }
+  if (!preview || !state_valid ||
+      std::chrono::steady_clock::now() - last_state >= 500ms ||
+      !armed_received || !same_header(preview->header, monitor_armed)) {
+    RCLCPP_ERROR(node->get_logger(),
+      "No fresh TCP preview, live joint state or MATCHING monitor arm");
+    return 1;
+  }
+  if ((node->now() - rclcpp::Time(preview->header.stamp)).seconds() > 15.0 ||
+      !validate(*preview, current, node->get_logger())) {
+    RCLCPP_ERROR(node->get_logger(), "TCP preview invalid or expired");
+    return 1;
+  }
+
+  auto client = rclcpp_action::create_client<FollowJT>(
+    node, "/joint_trajectory_controller/follow_joint_trajectory");
+  if (!client->wait_for_action_server(5s)) {
+    RCLCPP_ERROR(node->get_logger(), "FollowJointTrajectory unavailable");
+    return 1;
+  }
+  // A second hardware check immediately before the goal: never trust merely
+  // seeing an Action server or a controller whose hardware may have changed.
+  if (!check_mock(node)) return 1;
+  rclcpp::spin_some(node);
+  if (!state_valid || std::chrono::steady_clock::now() - last_state >= 500ms ||
+      (node->now() - rclcpp::Time(preview->header.stamp)).seconds() > 15.0 ||
+      !validate(*preview, current, node->get_logger())) {
+    RCLCPP_ERROR(node->get_logger(), "Trajectory/start state changed before send");
+    return 1;
+  }
+
+  FollowJT::Goal goal;
+  goal.trajectory = *preview;
+  // Zero stamp means start immediately, not 'execute at original preview time'.
+  goal.trajectory.header.stamp.sec = 0;
+  goal.trajectory.header.stamp.nanosec = 0;
+  auto options = rclcpp_action::Client<FollowJT>::SendGoalOptions();
+  options.feedback_callback = [node](
+      auto, const std::shared_ptr<const FollowJT::Feedback> fb) {
+    if (!fb->actual.positions.empty()) {
+      RCLCPP_INFO_THROTTLE(node->get_logger(), *node->get_clock(), 1000,
+        "MOCK feedback: J1=%.5f", fb->actual.positions.front());
+    }
+  };
+  RCLCPP_WARN(node->get_logger(), "SENDING 5C TCP PATH TO VERIFIED MOCK");
+  auto goal_future = client->async_send_goal(goal, options);
+  if (rclcpp::spin_until_future_complete(node, goal_future, 5s) !=
+      rclcpp::FutureReturnCode::SUCCESS) {
+    RCLCPP_ERROR(node->get_logger(), "Goal acceptance timed out; state unknown");
+    return 1;
+  }
+  const auto handle = goal_future.get();
+  if (!handle) {
+    RCLCPP_ERROR(node->get_logger(), "Controller rejected trajectory");
+    return 1;
+  }
+  RCLCPP_INFO(node->get_logger(), "Mock goal ACCEPTED");
+  auto result_future = client->async_get_result(handle);
+  if (rclcpp::spin_until_future_complete(node, result_future, 20s) !=
+      rclcpp::FutureReturnCode::SUCCESS) {
+    RCLCPP_ERROR(node->get_logger(),
+      "Result timeout; requesting cancel, do NOT assume robot stopped");
+    auto cancel_future = client->async_cancel_goal(handle);
+    (void)rclcpp::spin_until_future_complete(node, cancel_future, 3s);
+    return 1;
+  }
+  const auto result = result_future.get();
+  if (result.code != rclcpp_action::ResultCode::SUCCEEDED || !result.result ||
+      result.result->error_code != FollowJT::Result::SUCCESSFUL) {
+    RCLCPP_ERROR(node->get_logger(), "Mock controller did not report SUCCESS");
+    return 1;
+  }
+  const auto &goal_joints = preview->points.back().positions;
+  const auto end_deadline = std::chrono::steady_clock::now() + 2s;
+  while (rclcpp::ok() && std::chrono::steady_clock::now() < end_deadline) {
+    rclcpp::spin_some(node);
+    if (state_valid && std::chrono::steady_clock::now() - last_state < 500ms) {
+      double max_error = 0.0;
+      for (size_t j = 0; j < 6; ++j) {
+        max_error = std::max(max_error, std::abs(current[j] - goal_joints[j]));
+      }
+      if (max_error <= 0.005) {
+        RCLCPP_INFO(node->get_logger(),
+          "5C MOCK ACTION SUCCESS; final joint error=%.7f rad", max_error);
+        return 0;
+      }
+    }
+    std::this_thread::sleep_for(20ms);
+  }
+  RCLCPP_ERROR(node->get_logger(), "Mock result succeeded but final state failed");
+  return 1;
+}
+}  // namespace
+
+int main(int argc, char **argv)
+{
+  rclcpp::init(argc, argv);
+  const auto node = std::make_shared<rclcpp::Node>("mtc_tcp_cartesian_executor");
+  const int status = run(node);
+  if (rclcpp::ok()) rclcpp::shutdown();
+  return status;
+}

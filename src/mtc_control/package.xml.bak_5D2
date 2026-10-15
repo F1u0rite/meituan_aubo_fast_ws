@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>mtc_control</name>
+  <version>0.0.1</version>
+
+  <description>
+    Meituan AUBO S3 ROS 2 Jazzy control, kinematics and V1 tool TCP.
+    Stages 1-5D: original state, action, KDL, legacy Cartesian nodes,
+    V1 tool TF, TCP planning, GenericSystem-only TCP execution monitoring,
+    six-stage sequence preview, sequence monitor and GenericSystem-only execution.
+  </description>
+
+  <maintainer email="aaet@example.com">aaet</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>controller_manager_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>kdl_parser</depend>
+  <depend>urdf</depend>
+  <depend>orocos_kdl_vendor</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

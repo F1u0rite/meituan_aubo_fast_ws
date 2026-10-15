@@ -1,0 +1,16 @@
+# OFFICIAL DRAWING ANNOTATIONS + CENTRE POSITIONS APPROXIMATED FROM ARTWORK.
+# NOT measured coordinates; NOT registered to base_link. Units metres.
+mtc_task_board:
+  ros__parameters:
+    layout: precision
+    root_frame: task_board_illustration
+    publish_markers: true
+    precision_battery_zone_xy_m: [0.180, 0.415]
+    precision_battery_A_xy_m: [0.140, 0.446]
+    precision_battery_B_xy_m: [0.219, 0.446]
+    precision_battery_C_xy_m: [0.140, 0.359]
+    precision_battery_D_xy_m: [0.219, 0.359]
+    precision_target_P1_xy_m: [0.435, 0.464]
+    precision_target_P2_xy_m: [0.610, 0.464]
+    precision_target_P3_xy_m: [0.610, 0.289]
+    base_reference_xy_m: [0.393, 0.100]

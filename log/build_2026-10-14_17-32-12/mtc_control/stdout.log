@@ -1,0 +1,80 @@
+-- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclcpp: 28.1.22 (/opt/ros/jazzy/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 4.6.9 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+-- Found rosidl_generator_cpp: 4.6.9 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 7.3.4 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 8.4.4 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found rclcpp_action: 28.1.22 (/opt/ros/jazzy/share/rclcpp_action/cmake)
+-- Found sensor_msgs: 5.3.8 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+-- Found trajectory_msgs: 5.3.8 (/opt/ros/jazzy/share/trajectory_msgs/cmake)
+-- Found control_msgs: 5.10.0 (/opt/ros/jazzy/share/control_msgs/cmake)
+-- Found controller_manager_msgs: 4.48.1 (/opt/ros/jazzy/share/controller_manager_msgs/cmake)
+-- Found tf2: 0.36.23 (/opt/ros/jazzy/share/tf2/cmake)
+-- Found tf2_ros: 0.36.23 (/opt/ros/jazzy/share/tf2_ros/cmake)
+-- Found kdl_parser: 2.11.0 (/opt/ros/jazzy/share/kdl_parser/cmake)
+-- Found eigen3_cmake_module: 0.3.1 (/opt/ros/jazzy/share/eigen3_cmake_module/cmake)
+-- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+-- Found urdf: 2.10.1 (/opt/ros/jazzy/share/urdf/cmake)
+-- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Added test 'copyright' to check source files copyright and LICENSE
+-- Added test 'cppcheck' to perform static code analysis on C / C++ code
+-- Configured cppcheck include dirs: 
+-- Configured cppcheck exclude dirs and/or files: 
+-- Added test 'cpplint' to check C / C++ code against the Google style
+-- Configured cpplint exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'uncrustify' to check C / C++ code style
+-- Configured uncrustify additional arguments: 
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done (0.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/aaet/meituan_aubo_fast_ws/build/mtc_control
+[  4%] [32mBuilding CXX object CMakeFiles/tcp_sequence_executor.dir/src/tcp_sequence_executor.cpp.o[0m
+[  8%] [32mBuilding CXX object CMakeFiles/tcp_sequence_monitor.dir/src/tcp_sequence_monitor.cpp.o[0m
+[ 16%] Built target tool_frames_node
+[ 25%] Built target cartesian_trajectory
+[ 33%] Built target trajectory_client
+[ 50%] Built target tcp_cartesian_executor
+[ 50%] Built target tcp_cartesian_monitor
+[ 58%] Built target tcp_sequence_planner
+[ 66%] Built target robot_state_node
+[ 75%] Built target cartesian_monitor
+[ 83%] Built target cartesian_executor
+[ 91%] Built target kinematics_node
+[ 95%] [32m[1mLinking CXX executable tcp_sequence_executor[0m
+[ 95%] Built target tcp_sequence_executor
+[100%] [32m[1mLinking CXX executable tcp_sequence_monitor[0m
+[100%] Built target tcp_sequence_monitor
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/robot_state_node
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/trajectory_client
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/kinematics_node
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_trajectory
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_executor
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_monitor
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tool_frames_node
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_cartesian_monitor
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_cartesian_executor
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_sequence_planner
+-- Symlinking: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_sequence_monitor
+-- Symlinking: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_sequence_executor
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/package_run_dependencies/mtc_control
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/parent_prefix_path/mtc_control
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/path.sh
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/path.dsv
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.bash
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.sh
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.zsh
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.dsv
+-- Symlinking: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/package.dsv
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/packages/mtc_control
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/cmake/mtc_controlConfig.cmake
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/cmake/mtc_controlConfig-version.cmake
+-- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/package.xml

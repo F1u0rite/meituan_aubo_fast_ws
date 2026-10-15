@@ -1,0 +1,14 @@
+# OFFICIAL DRAWING ANNOTATIONS + CENTRE POSITIONS APPROXIMATED FROM ARTWORK.
+# NOT measured coordinates; NOT registered to base_link. Units metres.
+mtc_task_board:
+  ros__parameters:
+    layout: basic
+    root_frame: task_board_illustration
+    publish_markers: true
+    basic_battery_zone_xy_m: [0.218, 0.415]
+    basic_battery_A_xy_m: [0.178, 0.446]
+    basic_battery_B_xy_m: [0.257, 0.446]
+    basic_battery_C_xy_m: [0.178, 0.359]
+    basic_battery_D_xy_m: [0.257, 0.359]
+    basic_target_T0_xy_m: [0.508, 0.400]
+    base_reference_xy_m: [0.393, 0.100]

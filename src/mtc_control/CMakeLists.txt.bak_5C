@@ -1,0 +1,98 @@
+cmake_minimum_required(VERSION 3.8)
+project(mtc_control)
+
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# ROS 2 Jazzy dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(trajectory_msgs REQUIRED)
+find_package(control_msgs REQUIRED)
+find_package(controller_manager_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(kdl_parser REQUIRED)
+find_package(urdf REQUIRED)
+find_package(orocos_kdl REQUIRED)
+
+# 1. Original robot state reader
+add_executable(robot_state_node src/robot_state_node.cpp)
+ament_target_dependencies(robot_state_node rclcpp sensor_msgs)
+
+# 2. Original mock-only joint trajectory client
+add_executable(trajectory_client src/trajectory_client.cpp)
+ament_target_dependencies(trajectory_client
+  rclcpp rclcpp_action sensor_msgs trajectory_msgs
+  control_msgs controller_manager_msgs)
+
+# 3. Original KDL kinematics
+add_executable(kinematics_node src/kinematics_node.cpp)
+ament_target_dependencies(kinematics_node
+  rclcpp sensor_msgs std_msgs geometry_msgs tf2 tf2_ros kdl_parser urdf)
+target_link_libraries(kinematics_node orocos-kdl)
+
+# 4A, 5B. TCP Cartesian planner: preview only (unchanged)
+add_executable(cartesian_trajectory src/cartesian_trajectory.cpp)
+ament_target_dependencies(cartesian_trajectory
+  rclcpp sensor_msgs std_msgs geometry_msgs trajectory_msgs
+  tf2 tf2_ros kdl_parser urdf)
+target_link_libraries(cartesian_trajectory orocos-kdl)
+
+# 4B. Legacy Cartesian executor (unchanged)
+add_executable(cartesian_executor src/cartesian_executor.cpp)
+ament_target_dependencies(cartesian_executor
+  rclcpp rclcpp_action sensor_msgs trajectory_msgs
+  control_msgs controller_manager_msgs)
+
+# 4C. Legacy Cartesian monitor (unchanged)
+add_executable(cartesian_monitor src/cartesian_monitor.cpp)
+ament_target_dependencies(cartesian_monitor
+  rclcpp sensor_msgs std_msgs trajectory_msgs kdl_parser)
+target_link_libraries(cartesian_monitor orocos-kdl)
+
+# 5A. V1 tool reference frames (unchanged)
+add_executable(tool_frames_node src/tool_frames_node.cpp)
+ament_target_dependencies(tool_frames_node rclcpp geometry_msgs tf2 tf2_ros)
+
+# 5C. NEW: read-only TCP-space path monitor
+add_executable(tcp_cartesian_monitor src/tcp_cartesian_monitor.cpp)
+ament_target_dependencies(tcp_cartesian_monitor
+  rclcpp sensor_msgs std_msgs trajectory_msgs geometry_msgs
+  tf2 tf2_ros kdl_parser)
+target_link_libraries(tcp_cartesian_monitor orocos-kdl)
+
+# 5C. NEW: explicitly enabled GenericSystem-only executor
+add_executable(tcp_cartesian_executor src/tcp_cartesian_executor.cpp)
+ament_target_dependencies(tcp_cartesian_executor
+  rclcpp rclcpp_action sensor_msgs std_msgs trajectory_msgs
+  control_msgs controller_manager_msgs)
+
+install(TARGETS
+  robot_state_node
+  trajectory_client
+  kinematics_node
+  cartesian_trajectory
+  cartesian_executor
+  cartesian_monitor
+  tool_frames_node
+  tcp_cartesian_monitor
+  tcp_cartesian_executor
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()

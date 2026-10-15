@@ -1,0 +1,84 @@
+[0.011s] Invoking command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/aaet/meituan_aubo_fast_ws/build/mtc_control -- -j22 -l22
+[0.033s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.176s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.180s] -- Found rclcpp: 28.1.22 (/opt/ros/jazzy/share/rclcpp/cmake)
+[0.195s] -- Found rosidl_generator_c: 4.6.9 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.200s] -- Found rosidl_generator_cpp: 4.6.9 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.206s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.214s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.249s] -- Found rmw_implementation_cmake: 7.3.4 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.250s] -- Found rmw_fastrtps_cpp: 8.4.4 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.300s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.342s] -- Found rclcpp_action: 28.1.22 (/opt/ros/jazzy/share/rclcpp_action/cmake)
+[0.365s] -- Found sensor_msgs: 5.3.8 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[0.398s] -- Found trajectory_msgs: 5.3.8 (/opt/ros/jazzy/share/trajectory_msgs/cmake)
+[0.410s] -- Found control_msgs: 5.10.0 (/opt/ros/jazzy/share/control_msgs/cmake)
+[0.434s] -- Found controller_manager_msgs: 4.48.1 (/opt/ros/jazzy/share/controller_manager_msgs/cmake)
+[0.464s] -- Found tf2: 0.36.23 (/opt/ros/jazzy/share/tf2/cmake)
+[0.466s] -- Found tf2_ros: 0.36.23 (/opt/ros/jazzy/share/tf2_ros/cmake)
+[0.507s] -- Found kdl_parser: 2.11.0 (/opt/ros/jazzy/share/kdl_parser/cmake)
+[0.507s] -- Found eigen3_cmake_module: 0.3.1 (/opt/ros/jazzy/share/eigen3_cmake_module/cmake)
+[0.508s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[0.509s] -- Found urdf: 2.10.1 (/opt/ros/jazzy/share/urdf/cmake)
+[0.534s] -- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[0.598s] -- Added test 'copyright' to check source files copyright and LICENSE
+[0.599s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[0.599s] -- Configured cppcheck include dirs: 
+[0.599s] -- Configured cppcheck exclude dirs and/or files: 
+[0.600s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[0.600s] -- Configured cpplint exclude dirs and/or files: 
+[0.600s] -- Added test 'lint_cmake' to check CMake code style
+[0.601s] -- Added test 'uncrustify' to check C / C++ code style
+[0.601s] -- Configured uncrustify additional arguments: 
+[0.601s] -- Added test 'xmllint' to check XML markup files
+[0.602s] -- Configuring done (0.6s)
+[0.645s] -- Generating done (0.0s)
+[0.659s] -- Build files have been written to: /home/aaet/meituan_aubo_fast_ws/build/mtc_control
+[0.695s] [ 11%] Built target cartesian_monitor
+[0.695s] [ 11%] [32mBuilding CXX object CMakeFiles/ik_diagnostic.dir/src/ik_diagnostic.cpp.o[0m
+[0.696s] [ 19%] Built target cartesian_executor
+[0.696s] [ 26%] Built target tcp_sequence_planner
+[0.698s] [ 34%] Built target cartesian_trajectory
+[0.699s] [ 42%] Built target kinematics_node
+[0.699s] [ 50%] Built target robot_state_node
+[0.699s] [ 57%] Built target tool_frames_node
+[0.700s] [ 65%] Built target trajectory_client
+[0.700s] [ 73%] Built target tcp_sequence_executor
+[0.701s] [ 80%] Built target tcp_cartesian_monitor
+[0.702s] [ 88%] Built target tcp_cartesian_executor
+[0.703s] [ 96%] Built target tcp_sequence_monitor
+[8.416s] [100%] [32m[1mLinking CXX executable ik_diagnostic[0m
+[8.699s] [100%] Built target ik_diagnostic
+[8.710s] Invoked command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/aaet/meituan_aubo_fast_ws/build/mtc_control -- -j22 -l22
+[8.719s] Invoking command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/aaet/meituan_aubo_fast_ws/build/mtc_control
+[8.725s] -- Install configuration: ""
+[8.726s] -- Execute custom install script
+[8.726s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/robot_state_node
+[8.726s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/trajectory_client
+[8.726s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/kinematics_node
+[8.726s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_trajectory
+[8.726s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_executor
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/cartesian_monitor
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tool_frames_node
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_cartesian_monitor
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_cartesian_executor
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_sequence_planner
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_sequence_monitor
+[8.727s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/tcp_sequence_executor
+[8.727s] -- Symlinking: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/lib/mtc_control/ik_diagnostic
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/package_run_dependencies/mtc_control
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/parent_prefix_path/mtc_control
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/ament_prefix_path.sh
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/ament_prefix_path.dsv
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/path.sh
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/environment/path.dsv
+[8.733s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.bash
+[8.734s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.sh
+[8.734s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.zsh
+[8.734s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/local_setup.dsv
+[8.734s] -- Symlinking: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/package.dsv
+[8.742s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/ament_index/resource_index/packages/mtc_control
+[8.742s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/cmake/mtc_controlConfig.cmake
+[8.742s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/cmake/mtc_controlConfig-version.cmake
+[8.742s] -- Up-to-date symlink: /home/aaet/meituan_aubo_fast_ws/install/mtc_control/share/mtc_control/package.xml
+[8.743s] Invoked command in '/home/aaet/meituan_aubo_fast_ws/build/mtc_control' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/aaet/meituan_aubo_fast_ws/build/mtc_control
