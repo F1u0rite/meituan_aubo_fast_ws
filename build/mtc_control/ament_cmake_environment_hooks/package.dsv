@@ -1,4 +1,0 @@
-source;share/mtc_control/local_setup.bash
-source;share/mtc_control/local_setup.dsv
-source;share/mtc_control/local_setup.sh
-source;share/mtc_control/local_setup.zsh

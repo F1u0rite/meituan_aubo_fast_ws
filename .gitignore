@@ -1,0 +1,67 @@
+# ============================================================
+# Meituan AUBO S3 / ROS 2 Jazzy colcon workspace
+# Keep src/mtc_control, config YAML and Markdown documents.
+# ============================================================
+
+# colcon / ROS 2 generated outputs
+/build/
+/install/
+/log/
+/.colcon/
+
+# Local C++ / CMake build outputs
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+*.o
+*.so
+*.a
+
+# Local snapshots and backups (e.g. CMakeLists.txt.bak_5C)
+*.bak
+*.bak_*
+*.bak.*
+*.backup
+*.old
+*.orig
+*.rej
+*~
+
+# Editors / operating system
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Python-generated files and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Runtime recordings and oversized debug data
+rosbag2_*/
+*.bag
+*.db3
+*.mcap
+*.log
+core
+core.*
+
+# Credentials or machine-local environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+
+# Do NOT ignore CMakeLists.txt, package.xml, *.cpp, *.yaml or *.md.

@@ -1,1 +1,0 @@
-/home/aaet/meituan_aubo_fast_ws/build/mtc_control/ament_cmake_core/mtc_controlConfig.cmake

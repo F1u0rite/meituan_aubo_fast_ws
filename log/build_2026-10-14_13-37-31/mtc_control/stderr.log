@@ -1,9 +1,0 @@
-[31mCMake Error at CMakeLists.txt:57 (add_executable):
-  add_executable cannot create target "trajectory_client" because another
-  target with the same name already exists.  The existing target is an
-  executable created in source directory
-  "/home/aaet/meituan_aubo_fast_ws/src/mtc_control".  See documentation for
-  policy CMP0002 for more details.
-
-[0m
-gmake: *** [Makefile:267：cmake_check_build_system] 错误 1
